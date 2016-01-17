@@ -1,11 +1,20 @@
 Quick start
 -----------
 
-Git clone
+Aparently do: Git clone
 
-chmod's
 
-uncomment needed ones
+chmod's your mapping dirs permissions
+=====================================
+
+/docker-php5full/fpm-conf
+/docker-php5full/ini
+/mysql/databases
+
+
+docker-machine restart
+
+
 
 compose up
 
@@ -15,6 +24,13 @@ Run composer to initiate you projects. Or git clone ;)
 
 If you want to change you PHP version
 -------------------------------------
+
+uncomment needed php versions
+
+To Uses PHP7 in docker-compose.yml you should uncomment: ``
+And change `` to respective paths. 
+
+If you want to use PHP5 just leave
 
 Usefull commands
 ----------------
@@ -31,6 +47,21 @@ Cleanup all non running containers:
 Clean all compose containers:
 `docker-compose rm $(docker-compose ps | grep Exit | awk '{print $1;}')`
 
+Clean images tagged <none>:
+`docker rmi -f $(docker images | grep none | awk '{print $3;}')`
+
+If you are getting `cant connect` errors run these:
+-----------------------------------------
+`docker-machine restart default`
+`docker-machine regenerate-certs default`
+
+and this:
+`eval $(docker-machine env default)`
+
+Ok, worst case:
+`killall -9 VBoxHeadless && docker-machine restart default`
+
+`docker-compose up --force-recreate`
 
 Good links:
 
