@@ -1,12 +1,12 @@
 phpfpm:
   restart: always
-  build: ./docker-php7full
-#  image: php:5.6.17-fpm
+#  build: ./docker-php7full
+  build: ./docker-php5full
   volumes:
-    - ./php-fpm-7/fpm-conf:/usr/local/etc
-    - ./php-fpm-7/ini:/usr/local/etc/php
-    - ./app:/var/www/html
+    - ./docker-php5full/fpm-conf:/usr/local/etc
+    - ./docker-php5full/ini:/usr/local/etc/php
     - ./log/php-fpm:/var/log/php-fpm
+    - ./app:/var/www/html
   links:
     - db:db
     - es:es
@@ -31,9 +31,9 @@ db:
   environment:
     - MYSQL_ROOT_PASSWORD=root
     - MYSQL_HOST=db
-    - MYSQL_DATABASE=pampam
-    - MYSQL_USER=lukas
-    - MYSQL_PASSWORD=lukas
+    - MYSQL_DATABASE=test
+    - MYSQL_USER=user
+    - MYSQL_PASSWORD=password
   volumes:
     - ./mysql/script/:/script:rw
     - ./log/mysql:/var/log/mysql
@@ -58,6 +58,8 @@ es:
     - "9200:9200"
   volumes:
     - ./es:/usr/share/elasticsearch/data
+#    - ./es2:/usr/share/elasticsearch/data
     - ./es/script/:/script:rw
+#    - ./es2/script/:/script:rw
     - ./log/es:/var/log/elasticsearch
   command: "/script/permissions.sh"

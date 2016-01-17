@@ -87,4 +87,7 @@ RUN cd xdebug-2.4.0RC2 && \
     make && \
     cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20151012
 
+# Diegiame composer
+RUN curl -sS https://getcomposer.org/installer | php
+
 CMD ["php-fpm"]
