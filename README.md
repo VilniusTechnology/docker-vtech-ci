@@ -63,6 +63,11 @@ Ok, worst case:
 
 `docker-compose up --force-recreate`
 
+Reload Your machine
+
+
+`docker rmi $(docker images | grep _phpfpm | awk '{print $3;}') && docker-compose -rm -y`
+
 Good links:
 
 CLI PHP7: https://hub.docker.com/r/rocketgraph/docker-nginx-php/~/dockerfile/
