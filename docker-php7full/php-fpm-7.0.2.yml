@@ -1,0 +1,9 @@
+phpfpm:
+  build: .
+#  container_name: vtech_php7fpm
+  volumes:
+    - ./fpm-conf:/usr/local/etc
+    - ./ini:/usr/local/etc/php
+#    - ../log/php-fpm:/var/log/php-fpm
+    #    - ./app:/var/www/html
+#    - ../app:/var/www

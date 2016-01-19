@@ -1,12 +1,12 @@
 phpfpm:
   restart: always
-#  build: ./docker-php7full
-  build: ./docker-php5full
+  extends:
+#      file: ./docker-php5full/php-fpm-5.6.yml
+      file: docker-php7full/php-fpm-7.0.2.yml
+      service: phpfpm
   volumes:
-    - ./docker-php5full/fpm-conf:/usr/local/etc
-    - ./docker-php5full/ini:/usr/local/etc/php
-    - ./log/php-fpm:/var/log/php-fpm
-    - ./app:/var/www/html
+      - ./log/php-fpm:/var/log/php-fpm
+      - ./app:/var/www/html
   links:
     - db:db
     - es:es

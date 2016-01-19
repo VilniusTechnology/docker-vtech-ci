@@ -1,39 +1,69 @@
 Quick start
 -----------
 
-Aparently do: Git clone
+1. Git clone `git clone git@github.com:VilniusTechnology/docker-vtech-ci.git`.
+
+1.1. Mo to projects dir: `cd docker-vtech-ci`.
+
+2.1. Run `docker-compose`
+
+2.2. Check php.ini settings `http://192.168.99.100`. Also `http://192.168.99.100/mysql.php` checks mysql connection.
 
 
-chmod's your mapping dirs permissions
-=====================================
+2.3. If PHP5 is not good, choose uncomment desirable PHP version lines.
 
-/docker-php5full/fpm-conf
-/docker-php5full/ini
-/mysql/databases
+And clear up images and containers:
+
+`docker-compose rm `
+
+`docker rmi -f $(docker images | grep dockervtechci_phpfpm | awk '{print $3;}') && docker-compose rm -f`
+
+3. Git clone your PHP project into `./app` directory. Run `php composer install` if is needed.
 
 
-docker-machine restart
+    NOTE: If MySQL connection drops, restart compose. For some reason it works ok after reboot.
+    
+    NOTE: If you need to use php's composer, you can do it following way: ` `.
 
+Changing PHP version
+--------------------
 
+Uncomment lines containing `php7` and comment out `php5` if you need to use PHP7. And vice versa.  
 
-compose up
+Making changes in component containers
+--------------------------------------
 
-If MySQL connection drops, restart compose. For some reason it works ok after reboot.
+If have made any change in Dockerfile, you should:
 
-Run composer to initiate you projects. Or git clone ;)
+1. Clean all non running compose containers:
 
-If you want to change you PHP version
--------------------------------------
+`docker-compose rm $(docker-compose ps | grep Exit | awk '{print $1;}')`
 
-uncomment needed php versions
+2. Clean all images from this repo:
 
-To Uses PHP7 in docker-compose.yml you should uncomment: ``
-And change `` to respective paths. 
+`docker rmi -f $(docker images | grep dockervtechci_ | awk '{print $3;}') && docker-compose rm -y`
 
-If you want to use PHP5 just leave
+3. Run compose again:
 
-Usefull commands
+`docker-compose up`
+
+Containers should be rebuilded now.
+
+Useful commands
 ----------------
+
+    OSX: If Docker stops responding to network:
+    
+    Reboot OS, if wont helps:
+    
+    docker-machine restart default 
+    docker-machine regenerate-certs default
+    eval $(docker-machine env default)
+    
+    Ok, worst case: 
+    
+    killall -9 VBoxHeadless && docker-machine restart default
+
 
 Cleanup after this repo compose containers:
 
@@ -43,32 +73,16 @@ Cleanup all non running containers:
 
 `docker rm $(docker ps -a | grep Created | awk '{print $1;}')`
 
-
-Clean all compose containers:
-`docker-compose rm $(docker-compose ps | grep Exit | awk '{print $1;}')`
-
-Clean images tagged <none>:
-`docker rmi -f $(docker images | grep none | awk '{print $3;}')`
-
-If you are getting `cant connect` errors run these:
------------------------------------------
-`docker-machine restart default`
-`docker-machine regenerate-certs default`
-
-and this:
-`eval $(docker-machine env default)`
-
-Ok, worst case:
-`killall -9 VBoxHeadless && docker-machine restart default`
+    
+Force recreate composer containers:
 
 `docker-compose up --force-recreate`
 
-Reload Your machine
-
-
-`docker rmi $(docker images | grep _phpfpm | awk '{print $3;}') && docker-compose -rm -y`
 
 Good links:
+===========
+
+https://docs.docker.com/v1.5/compose/cli/
 
 CLI PHP7: https://hub.docker.com/r/rocketgraph/docker-nginx-php/~/dockerfile/
 

@@ -2,7 +2,7 @@
 FROM php:7.0.2-fpm
 
 # Kas atsakingas už konteinerio prieziura.
-MAINTAINER "Lukas Mikelionis" <lmikelionis@gmail.com>
+MAINTAINER "Lukas Mikelionis" <lukas.mikelionis@vilnius.technology>
 
 # Install base.
 RUN \

@@ -1,0 +1,6 @@
+phpfpm:
+  build: .
+#  container_name: vtech_php5fpm
+  volumes:
+    - ./fpm-conf:/usr/local/etc
+    - ./ini:/usr/local/etc/php
