@@ -1,65 +1,82 @@
 phpfpm:
-  restart: always
-  extends:
-#      file: ./docker-php5full/php-fpm-5.6.yml
-      file: docker-php7full/php-fpm-7.0.2.yml
-      service: phpfpm
-  volumes:
-      - ./log/php-fpm:/var/log/php-fpm
-      - ./app:/var/www/html
-  links:
-    - db:db
-    - es:es
+    restart: always
+    extends:
+        file: ./docker-php5full/php-fpm-5.6.yml
+#        file: docker-php7full/php-fpm-7.0.2.yml
+        service: phpfpm
+    volumes:
+        - ./app:/var/www/html
+        - ./docker-php7full/entrypoint:/entrypoint
+        - ./log/php-fpm:/var/log/php-fpm
+    links:
+        - db:db
+        - es:es
+
+    command: "/entrypoint/entrypoint.sh"
 
 nginx:
-  restart: always
-  image: nginx
-  ports:
-    - "80:80"
-  links:
-    - phpfpm:phpfpm
-  volumes:
-    - ./nginx/vhost.conf:/etc/nginx/conf.d/default.conf
-    - ./app:/var/www/html
-    - ./log/nginx:/var/log/nginx
+    restart: always
+    image: nginx
+    ports:
+        - "80:80"
+    links:
+        - phpfpm:phpfpm
+    volumes:
+        - ./nginx/entrypoint:/entrypoint
+#        - ./nginx/vhost_laravel.conf:/etc/nginx/conf.d/default.conf
+        - ./nginx/vhost_symfony.conf:/etc/nginx/conf.d/default.conf
+        - ./app:/var/www/html
+        - ./log/nginx:/var/log/nginx
+
+    command: "/entrypoint/entrypoint.sh"
 
 db:
-  container_name: db
-  image: mysql:5.6.27
-  ports:
-    - "3306:3306"
-  environment:
-    - MYSQL_ROOT_PASSWORD=root
-    - MYSQL_HOST=db
-    - MYSQL_DATABASE=test
-    - MYSQL_USER=user
-    - MYSQL_PASSWORD=password
-  volumes:
-    - ./mysql/script/:/script:rw
-    - ./log/mysql:/var/log/mysql
-    - ./mysql/databases:/var/lib/mysql
-  command: "/script/permissions.sh"
+    image: mysql:5.6.27
+    ports:
+        - "3306:3306"
+    environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_HOST=db
+        - MYSQL_DATABASE=test
+        - MYSQL_USER=user
+        - MYSQL_PASSWORD=password
+    volumes:
+        - ./mysql/script/:/script:rw
+        - ./log/mysql:/var/log/mysql
+        - ./mysql/databases:/var/lib/mysql
+
+    command: "/script/permissions.sh"
 
 pma:
-  image: phpmyadmin/phpmyadmin
-  ports:
-    - "8080:8080"
-  links:
-    - db:db
-  environment:
-    - PMA_HOST=db
-    - PMA_USER=root
-    - PMA_PASSWORD=root
+    image: phpmyadmin/phpmyadmin
+    ports:
+        - "8080:8080"
+    links:
+        - db:db
+    environment:
+        - PMA_HOST=db
+        - PMA_USER=root
+        - PMA_PASSWORD=root
 
 es:
-#  image: elasticsearch:2.1.1
-  image: elasticsearch:1.7.4
-  ports:
-    - "9200:9200"
-  volumes:
-    - ./es:/usr/share/elasticsearch/data
-#    - ./es2:/usr/share/elasticsearch/data
-    - ./es/script/:/script:rw
-#    - ./es2/script/:/script:rw
-    - ./log/es:/var/log/elasticsearch
-  command: "/script/permissions.sh"
+    #  image: elasticsearch:2.1.1
+    image: elasticsearch:1.7.4
+    ports:
+        - "9200:9200"
+    volumes:
+        - ./es:/usr/share/elasticsearch/data
+#        - ./es2:/usr/share/elasticsearch/data
+        - ./es/script/:/script:rw
+#        - ./es2/script/:/script:rw
+        - ./log/es:/var/log/elasticsearch
+
+    command: "/script/permissions.sh"
+
+#mongo_db:
+#    image: mongo:latest
+#    ports:
+#        - "27017:27017"
+#    volumes:
+#        - ./es:/usr/share/elasticsearch/data
+##       - ./es/script/:/script:rw
+#        - ./log/es:/var/log/elasticsearch

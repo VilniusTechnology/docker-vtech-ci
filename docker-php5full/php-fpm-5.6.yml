@@ -1,6 +1,6 @@
 phpfpm:
-  build: .
-#  container_name: vtech_php5fpm
-  volumes:
-    - ./fpm-conf:/usr/local/etc
-    - ./ini:/usr/local/etc/php
+    build: .
+    volumes:
+        - ./docker-php7full/entrypoint:/entrypoint
+        - ./log/php-fpm:/var/log/php-fpm
+#        - ./app:/var/www/
