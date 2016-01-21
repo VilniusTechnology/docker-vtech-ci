@@ -5,9 +5,9 @@ MAINTAINER "Lukas Mikelionis" <lukas.mikelionis@vilnius.technology>
 RUN apt-get update
 
 # Install ZIP extension
-#RUN apt-get install -y php-pear
-#RUN apt-get install -y zziplib-bin
-#RUN pecl install "channel://pecl.php.net/zip-1.5.0"
+RUN apt-get install -y php-pear
+RUN apt-get install -y zziplib-bin
+RUN pecl install "channel://pecl.php.net/zip-1.5.0"
 
 # Install modules
 RUN apt-get install -y \
@@ -24,9 +24,11 @@ RUN apt-get install -y \
     && docker-php-ext-install mbstring
 
 # Deploy git
-RUN apt-get update && apt-get install -y git-all
+RUN apt-get install -y git-all
 
 # Install Xdebug
+RUN pecl install xdebug
+
 RUN curl -SL "http://xdebug.org/files/xdebug-2.4.0rc2.tgz" -o xdebug.tgz
 RUN tar zxvf xdebug.tgz
 RUN cd xdebug-2.4.0RC2 && \
@@ -46,7 +48,5 @@ RUN chmod a+x /usr/local/bin/symfony
 RUN composer global require "laravel/installer"
 RUN ln -s /root/.composer/vendor/bin/laravel /usr/local/bin/laravel
 RUN PATH=$PATH:/root/.composer/vendor/bin
-
-#VOLUME ["/var/www"]
 
 CMD ["php-fpm"]

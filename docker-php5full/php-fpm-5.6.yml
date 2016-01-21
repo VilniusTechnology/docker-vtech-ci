@@ -1,6 +1,4 @@
 phpfpm:
     build: .
     volumes:
-        - ./docker-php7full/entrypoint:/entrypoint
-        - ./log/php-fpm:/var/log/php-fpm
-#        - ./app:/var/www/
+        - ./ini:/usr/local/etc/php

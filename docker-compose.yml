@@ -9,8 +9,8 @@ phpfpm:
         - ./docker-php7full/entrypoint:/entrypoint
         - ./log/php-fpm:/var/log/php-fpm
     links:
-        - db:db
-        - es:es
+        - mysql_db:mysql_db
+        - es_db:es_db
 
     command: "/entrypoint/entrypoint.sh"
 
@@ -30,7 +30,7 @@ nginx:
 
     command: "/entrypoint/entrypoint.sh"
 
-db:
+mysql_db:
     image: mysql:5.6.27
     ports:
         - "3306:3306"
@@ -52,31 +52,39 @@ pma:
     ports:
         - "8080:8080"
     links:
-        - db:db
+        - mysql_db:mysql_db
     environment:
         - PMA_HOST=db
         - PMA_USER=root
         - PMA_PASSWORD=root
 
-es:
-    #  image: elasticsearch:2.1.1
-    image: elasticsearch:1.7.4
+es_db:
+    image: elasticsearch:2.1.1
+#    image: elasticsearch:1.7.4
     ports:
         - "9200:9200"
     volumes:
-        - ./es:/usr/share/elasticsearch/data
-#        - ./es2:/usr/share/elasticsearch/data
-        - ./es/script/:/script:rw
-#        - ./es2/script/:/script:rw
+#        - ./es:/usr/share/elasticsearch/data
+        - ./es2:/usr/share/elasticsearch/data
+#        - ./es/script/:/script:rw
+        - ./es2/script/:/script:rw
         - ./log/es:/var/log/elasticsearch
 
     command: "/script/permissions.sh"
 
-#mongo_db:
-#    image: mongo:latest
-#    ports:
-#        - "27017:27017"
-#    volumes:
-#        - ./es:/usr/share/elasticsearch/data
-##       - ./es/script/:/script:rw
-#        - ./log/es:/var/log/elasticsearch
+mongo_db:
+    image: mongo:latest
+    ports:
+        - "27017:27017"
+    volumes:
+        - ./mongo/databases:/var/lib/mongodb
+        - ./log/mongo:/var/log/mongo
+
+rabbitmq:
+    image: rabbitmq:3.5.3-management
+    ports:
+        - "15672:15672"  # management port (guest:guest)
+        - "5672:5672"   # amqp port
+        - "25672:25672" # cluster port
+    environment:
+        - "RABBITMQ_NODENAME=my-rabbit"
