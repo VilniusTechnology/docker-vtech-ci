@@ -1,18 +1,18 @@
 phpfpm:
+    image: vtech/docker-phpfpm5-ssh:dev
     restart: always
-    extends:
-        file: ./docker-php5full/php-fpm-5.6.yml
-#        file: docker-php7full/php-fpm-7.0.2.yml
-        service: phpfpm
+    ports:
+        - "2222:22"
     volumes:
         - ./app:/var/www/html
-        - ./docker-php7full/entrypoint:/entrypoint
+        - ./docker-php5full/supervisor:/etc/supervisor/conf.d
+        - ./docker-php5full/entrypoint:/entrypoint
         - ./log/php-fpm:/var/log/php-fpm
     links:
         - mysql_db:mysql_db
         - es_db:es_db
-
     command: "/entrypoint/entrypoint.sh"
+
 
 nginx:
     restart: always
@@ -47,16 +47,18 @@ mysql_db:
 
     command: "/script/permissions.sh"
 
-pma:
-    image: phpmyadmin/phpmyadmin
-    ports:
-        - "8080:8080"
-    links:
-        - mysql_db:mysql_db
-    environment:
-        - PMA_HOST=db
-        - PMA_USER=root
-        - PMA_PASSWORD=root
+
+#pma:
+#    image: phpmyadmin/phpmyadmin
+#    ports:
+#        - "8080:8080"
+#    links:
+#        - mysql_db:mysql_db
+#    environment:
+#        - PMA_HOST=db
+#        - PMA_USER=root
+#        - PMA_PASSWORD=root
+
 
 es_db:
     image: elasticsearch:2.1.1
@@ -72,19 +74,21 @@ es_db:
 
     command: "/script/permissions.sh"
 
-mongo_db:
-    image: mongo:latest
-    ports:
-        - "27017:27017"
-    volumes:
-        - ./mongo/databases:/var/lib/mongodb
-        - ./log/mongo:/var/log/mongo
 
-rabbitmq:
-    image: rabbitmq:3.5.3-management
-    ports:
-        - "15672:15672"  # management port (guest:guest)
-        - "5672:5672"   # amqp port
-        - "25672:25672" # cluster port
-    environment:
-        - "RABBITMQ_NODENAME=my-rabbit"
+#mongo_db:
+#    image: mongo:latest
+#    ports:
+#        - "27017:27017"
+#    volumes:
+#        - ./mongo/databases:/var/lib/mongodb
+#        - ./log/mongo:/var/log/mongo
+#
+#
+#rabbitmq:
+#    image: rabbitmq:3.5.3-management
+#    ports:
+#        - "15672:15672"  # management port (guest:guest)
+#        - "5672:5672"   # amqp port
+#        - "25672:25672" # cluster port
+#    environment:
+#        - "RABBITMQ_NODENAME=my-rabbit"

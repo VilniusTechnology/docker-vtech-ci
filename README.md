@@ -61,6 +61,15 @@ After tagging You should update your *.yml file to use newly tagged images not b
 
 Containers must be rebuilded now.
 
+SSH into PHP-FPM
+================
+
+`docker port dockervtechci_phpfpm_1 22`
+
+`docker inspect c1159e6a3498 | grep IPAddress`
+
+`ssh root@192.168.99.100 -p 2222`
+
 Laravel installation
 ====================
 
