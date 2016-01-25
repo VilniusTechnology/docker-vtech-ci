@@ -1,16 +1,14 @@
 phpfpm:
-    image: vtech/docker-phpfpm5-ssh:dev
+    image: vtech/docker-phpfpm7-ssh:dev
     restart: always
-    ports:
-        - "2222:22"
     volumes:
         - ./app:/var/www/html
-        - ./docker-php5full/supervisor:/etc/supervisor/conf.d
-        - ./docker-php5full/entrypoint:/entrypoint
+        - ./php/php7/entrypoint:/entrypoint
         - ./log/php-fpm:/var/log/php-fpm
     links:
-        - mysql_db:mysql_db
+        # - mysql_db:mysql_db
         - es_db:es_db
+
     command: "/entrypoint/entrypoint.sh"
 
 
@@ -23,29 +21,28 @@ nginx:
         - phpfpm:phpfpm
     volumes:
         - ./nginx/entrypoint:/entrypoint
-#        - ./nginx/vhost_laravel.conf:/etc/nginx/conf.d/default.conf
-        - ./nginx/vhost_symfony.conf:/etc/nginx/conf.d/default.conf
+        - ./nginx/vhost_match.dev.conf:/etc/nginx/conf.d/default.conf
         - ./app:/var/www/html
         - ./log/nginx:/var/log/nginx
 
     command: "/entrypoint/entrypoint.sh"
 
-mysql_db:
-    image: mysql:5.6.27
-    ports:
-        - "3306:3306"
-    environment:
-        - MYSQL_ROOT_PASSWORD=root
-        - MYSQL_HOST=db
-        - MYSQL_DATABASE=test
-        - MYSQL_USER=user
-        - MYSQL_PASSWORD=password
-    volumes:
-        - ./mysql/script/:/script:rw
-        - ./log/mysql:/var/log/mysql
-        - ./mysql/databases:/var/lib/mysql
+# mysql_db:
+#     image: mysql:5.6.27
+#     ports:
+#         - "3306:3306"
+#     environment:
+#         - MYSQL_ROOT_PASSWORD=root
+#         - MYSQL_HOST=db
+#         - MYSQL_DATABASE=test
+#         - MYSQL_USER=user
+#         - MYSQL_PASSWORD=password
+#     volumes:
+#         - ./mysql/script/:/script:rw
+#         - ./log/mysql:/var/log/mysql
+#         - ./mysql/databases:/var/lib/mysql
 
-    command: "/script/permissions.sh"
+#     command: "/script/permissions.sh"
 
 
 #pma:
@@ -74,6 +71,9 @@ es_db:
 
     command: "/script/permissions.sh"
 
+# http://lmenezes.com/elasticsearch-kopf/?location=http://192.168.99.100:9200
+# https://github.com/lmenezes/elasticsearch-kopf
+# http://www.elastichq.org/gettingstarted.html
 
 #mongo_db:
 #    image: mongo:latest

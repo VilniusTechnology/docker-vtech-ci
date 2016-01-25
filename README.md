@@ -3,14 +3,16 @@ Quick start
 
 1. Git clone `git clone git@github.com:VilniusTechnology/docker-vtech-ci.git`.
 
-1.1. Mo to projects dir: `cd docker-vtech-ci`.
+1.1. Move to projects dir: `cd docker-vtech-ci`.
 
-2.1. Run `docker-compose`
+2.1. Run `docker-compose up`
 
-2.2. Check php.ini settings `http://192.168.99.100`. Also `http://192.168.99.100/mysql.php` checks mysql connection.
+2.2. Check php.ini settings `http://192.168.99.100` (192.168.99.100 is default ip for default docker machine, 
+on different OS'es and setups it might be different). 
+Also `http://192.168.99.100/mysql.php` checks mysql connection.
 
-
-2.3. If PHP5 is not good, choose uncomment desirable PHP version lines.
+2.3. If PHP5 is not good, choose uncomment desirable PHP version 
+(7.0.2 currently available `vtech/docker-phpfpm7-ssh:dev`) lines.
 
 And clear up images and containers:
 
@@ -31,35 +33,10 @@ Changing PHP version
 
 Uncomment lines containing `php7` and comment out `php5` if you need to use PHP7. And vice versa.
 
-Rebuild images and containers.
+Rebuild images and containers. `docker-compose rm` `docker-compose up`
 
 If you need to switch versions constantly tag them.
 
-Making changes in component containers
---------------------------------------
-
-If have made any change in Dockerfile, you should:
-
-1. Clean all non running compose containers:
-
-`docker-compose rm $(docker-compose ps | grep Exit | awk '{print $1;}')`
-
-2. Clean all images from this repo:
-
-`docker rmi -f $(docker images | grep dockervtechci_ | awk '{print $3;}') && docker-compose rm -y`
-
-`docker rmi -f $(docker images | grep vtech_php | awk '{print $3;}') && docker-compose rm -y`
-
-3. Run compose again:
-
-`docker-compose up`
-
-4. For fast PHP version switching: You can tag your PHP versions image, so you wont have to rebuild it next time. 
-After tagging You should update your *.yml file to use newly tagged images not build using extended *.yml.
-
-`docker tag <image id> mynewtag:version`
-
-Containers must be rebuilded now.
 
 SSH into PHP-FPM
 ================
@@ -91,6 +68,7 @@ Symfony installation
 
 curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony
 chmod a+x /usr/local/bin/symfony
+
 
 Useful commands
 ----------------
